@@ -82,7 +82,7 @@ app.ws('/blocks/stream', (ws, req) => {
 })
 
 app.post('/callback', async (req, res) => {
-    console.log("Receiving callback from", req.get('host'))
+    console.log("Receiving callback from", req.get('Origin'))
     if (req.get('host') != process.env.NODE_HOST) {
         res.status(401).end()
         return;
