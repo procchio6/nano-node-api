@@ -20,55 +20,8 @@ app.use(bodyParser.json())
 
 app.get('/', (req, res) => res.json({"success": ""}))
 
-app.get('/create_account', async (req, res) => {
-    const account = await nano.key.create()
-    res.json(account)
-})
-
-app.get('/account/:address', async (req, res) => {
-    const {address} = req.params
-    const accountInfo = await nano.accounts.info(address)
-    res.json(accountInfo)
-})
-
-app.get('/account/:address/balance', async (req, res) => {
-    const {address} = req.params
-    try {
-        const nanoBalance = await nano.accounts.nanoBalance(address)
-        res.json({balance: nanoBalance})
-    } catch (error) {
-        res.json({error: "Account not found"}).status(404)
-    }
-})
-
-app.get('/block_count', async (req, res) => {
-    const blockCount = await nano.blocks.count()
-    res.json(blockCount)
-})
-
-app.get('/block/:blockHash', async (req, res) => {
-    const {blockHash} = req.params
-    try {
-        const block = await nano.blocks.info(blockHash, true)
-        res.json(JSON.parse(block))
-    } catch (error) {
-        res.json({error: "Block not found"}).status(404)
-    }
-})
-
-app.get('/block/:blockHash/history', async (req, res) => {
-    const {blockHash} = req.params
-    const {count = 1} = req.query
-    try {
-        const blockHistory = await nano.blocks.history(blockHash, count)
-        if (blockHistory.history == "") {
-            throw new Error("Block not found")
-        }
-        res.json(blockHistory)
-    } catch (error) {
-        res.json({error: error.message}).status(404)
-    }
-})
+app.use('/account', require('./routes/account'))
+app.use('/block', require('./routes/block'))
 
 app.ws('/blocks/stream', (ws, req) => {
     const {types} = req.query
@@ -82,6 +35,7 @@ app.ws('/blocks/stream', (ws, req) => {
 })
 
 app.post('/callback', async (req, res) => {
+    console.log("CALLBACK")
     console.log("Receiving callback from", req.get('Origin'))
     if (req.get('host') != process.env.NODE_HOST) {
         res.status(401).end()
