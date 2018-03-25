@@ -10,10 +10,7 @@ const app = express()
 const expressWs = require('express-ws')(app);
 const WebSocket = require('ws')
 
-const fetch = require('node-fetch')
-const Nano = require('nanode')
-
-const nano = new Nano({url: NODE_URL, apiKey: ""})
+const nano = require('./lib/nano')
 
 const bodyParser = require('body-parser')
 app.use(bodyParser.json())

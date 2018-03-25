@@ -1,7 +1,5 @@
 const router = require('express').Router()
-const Nano = require('nanode')
-
-const nano = new Nano({url: process.env.NODE_URL, apiKey: ""})
+const nano = require('../lib/nano')
 
 router.get('/create', async (req, res) => {
     const account = await nano.key.create()
